@@ -5,7 +5,7 @@ const Pagination = (props) => {
   const { itemsCount, pageSize, currentPage, onPageChange } = props;
 
   const pagesCount = Math.ceil(itemsCount / pageSize);
-  if (pagesCount === 1) return null;
+  if (pagesCount === 0) return null;
   const pages = _.range(1, pagesCount + 1);
 
   return (
@@ -14,10 +14,11 @@ const Pagination = (props) => {
         {pages.map((page) => (
           <li
             key={page}
-            onClick={() => onPageChange(page)}
             className={page === currentPage ? "page-item active" : "page-item"}
           >
-            <a className="page-link">{page}</a>
+            <a onClick={() => onPageChange(page)} className="page-link">
+              {page}
+            </a>
           </li>
         ))}
       </ul>
