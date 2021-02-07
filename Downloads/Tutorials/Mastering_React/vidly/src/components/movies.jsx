@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { getGenres } from "../services/fakeGenreService";
 import { getMovies } from "../services/fakeMovieService";
+import ListGroup from "./common/listGroup";
 import Pagination from "./common/pagination";
 import { paginate } from "../utils/paginate";
-import ListGroup from "./common/listGroup";
-import MoviesTable from "./moviesTable";
 import _ from "lodash";
+import MoviesTable from "./moviesTable";
 
 class Movies extends Component {
   state = {
@@ -18,7 +18,6 @@ class Movies extends Component {
 
   componentDidMount() {
     const genres = [{ _id: "", name: "All Genres" }, ...getGenres()];
-
     this.setState({
       movies: getMovies(),
       genres,
@@ -66,19 +65,17 @@ class Movies extends Component {
       movies: allMovies,
       pageSize,
       currentPage,
-      genres,
       sortColumn,
+      genres,
       selectedGenre,
     } = this.state;
 
-    //const { length: count } = this.state.movies;
     const filtered =
       selectedGenre && selectedGenre._id
         ? allMovies.filter((m) => m.genre._id === selectedGenre._id)
         : allMovies;
 
     const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
-
     const movies = paginate(sorted, currentPage, pageSize);
 
     return (
@@ -95,9 +92,9 @@ class Movies extends Component {
           <MoviesTable
             movies={movies}
             sortColumn={sortColumn}
+            onSort={this.handleSort}
             onLike={this.handleLike}
             onDelete={this.handleDelete}
-            onSort={this.handleSort}
           />
           <Pagination
             itemsCount={filtered.length}
