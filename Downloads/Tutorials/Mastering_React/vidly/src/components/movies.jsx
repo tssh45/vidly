@@ -1,11 +1,12 @@
 import React, { Component } from "react";
+import _ from "lodash";
 import { getGenres } from "../services/fakeGenreService";
 import { getMovies } from "../services/fakeMovieService";
-import ListGroup from "./common/listGroup";
+
 import Pagination from "./common/pagination";
+import ListGroup from "./common/listGroup";
 import { paginate } from "../utils/paginate";
 import MoviesTable from "./moviesTable";
-import _ from "lodash";
 
 class Movies extends Component {
   state = {
@@ -19,8 +20,8 @@ class Movies extends Component {
   componentDidMount() {
     const genres = [{ _id: "", name: "All Genres" }, ...getGenres()];
     this.setState({
-      movies: getMovies(),
       genres,
+      movies: getMovies(),
     });
   }
 
@@ -50,6 +51,7 @@ class Movies extends Component {
   handleGenreSelect = (genre) => {
     this.setState({
       selectedGenre: genre,
+      currentPage: 1,
     });
   };
 
@@ -64,16 +66,18 @@ class Movies extends Component {
       movies: allMovies,
       pageSize,
       currentPage,
-      sortColumn,
-      selectedGenre,
       genres,
+      selectedGenre,
+      sortColumn,
     } = this.state;
 
     const filtered =
       selectedGenre && selectedGenre._id
         ? allMovies.filter((m) => m.genre._id === selectedGenre._id)
         : allMovies;
+
     const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
+
     const movies = paginate(sorted, currentPage, pageSize);
 
     return (
@@ -86,13 +90,13 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
-          <p>Showing {filtered.length} movies in the database</p>
+          <p>Showing {filtered.length} movies in the database </p>
           <MoviesTable
             movies={movies}
-            sortColumn={sortColumn}
             onLike={this.handleLike}
             onDelete={this.handleDelete}
             onSort={this.handleSort}
+            sortColumn={sortColumn}
           />
           <Pagination
             itemsCount={filtered.length}
